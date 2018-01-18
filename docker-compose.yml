@@ -11,7 +11,6 @@ taigaback:
     labels:
         traefik.port: "8000"
         traefik.backend: "taigaback"
-    #   traefik.docker.network: "infrastructure"
         traefik.frontend.rule: "Host:localhost;PathPrefix:/api"
 
 taigafront:
