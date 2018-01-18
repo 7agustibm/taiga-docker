@@ -8,14 +8,29 @@ taigaback:
     image: dougg/taiga-back
     links:
         - postgres:postgres
-    ports:
-        - "8000:8000"
+    labels:
+        traefik.port: "8000"
+        traefik.backend: "taigaback"
+    #   traefik.docker.network: "infrastructure"
+        traefik.frontend.rule: "Host:localhost;PathPrefix:/api"
 
 taigafront:
     image: dougg/taiga-front
     links:
         - taigaback:taiga-back
-    ports:
-        - "8080:80"
     environment:
-        - "BASE_URL=http://localhost:8000"
+        - "BASE_URL=http://localhost"
+    labels:
+        traefik.port: "80"
+        traefik.backend: "taigafront"
+        traefik.frontend.rule: "Host:localhost"
+
+traefik:
+    image: traefik
+    command: -c /dev/null --web --docker --docker.domain=localhost --logLevel=DEBUG
+    restart: always
+    ports:
+        - "80:80"
+        - "8080:8080"
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
